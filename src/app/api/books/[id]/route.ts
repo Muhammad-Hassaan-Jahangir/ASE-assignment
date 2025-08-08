@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -17,7 +17,8 @@ export async function DELETE(
       );
     }
 
-    const bookId = params.id;
+    const resolvedParams = await params;
+    const bookId = resolvedParams.id;
 
     // Check if the book exists and belongs to the user
     const book = await prisma.book.findUnique({
